@@ -1,0 +1,39 @@
+
+server:
+  port: 9191
+
+spring:
+  application:
+    name: API-GATEWAY
+  config:
+    import: "optional:configserver:"
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: MOVIE-SERVICE
+          uri: lb://MOVIE-SERVICE
+          predicates:
+            - Path=/movies/**
+        - id: DIRECTOR-SERVICE
+          uri: lb://DIRECTOR-SERVICE
+          predicates:
+            - Path=/directors/**
+    config:
+      uri: https://lit-reef-49057.herokuapp.com/
+
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+#  instance:
+#    hostname: localhost
